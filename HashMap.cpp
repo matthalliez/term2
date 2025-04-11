@@ -2,7 +2,9 @@
 #include <vector>
 #include <list>
 #include <functional>
+#include <cstddef>
 
+template <typename K, typename V>
 class HashMap{
     private:
     std::vector<std::list<KeyValuePair<K,V>>> buckets;
@@ -13,7 +15,7 @@ class HashMap{
     //method to rehash the hashmap when it gets full
     void rehash(size_t rehashedBuckets){
         auto oldBuckets = buckets;
-        buckets.clear()
+        buckets.clear();
         buckets.rehash(rehashedBuckets);
         bucketCounter = rehashedBuckets;
         counter = 0;
@@ -26,7 +28,7 @@ class HashMap{
 
     public: 
     //constructors
-    HashMap(size_t initialBuckets =16, float initialLoadFactor = 0.75 ) : buckets(initialBuckets), count(0),bucketCounter(initialBuckets), loadFactor(initialLoadFactor){}
+    HashMap(size_t initialBuckets =16, float initialLoadFactor = 0.75 ) : buckets(initialBuckets), counter(0),bucketCounter(initialBuckets), loadFactor(initialLoadFactor){}
     //destructor
     ~HashMap() {} 
 
@@ -36,7 +38,7 @@ class HashMap{
     bool insert(K key, V value){
         //if the hashmap needs to be rehashed from the addition
         if(static_cast<float>(counter+1)/bucketCounter > loadFactor){
-            rehash(bucketcounter *2);
+            rehash(bucketCounter *2);
         }
         size_t bucketFinder = std::hash<K>{}(key) % bucketCounter;
         //check if the key already exists and sets the new value if it does
@@ -48,7 +50,7 @@ class HashMap{
         }
         //if the key doesnt exist then it inserts the new key-value pair
         buckets[bucketFinder].push_back(KeyValuePair<K,V>(key,value));
-        count++;
+        counter++;
         return true;
     }
 
@@ -60,7 +62,7 @@ class HashMap{
         for(auto i = bucket.begin(); i != bucket.end(); ++i){
             if(i->getKey() == key){
                 bucket.erase(i);
-                count--;
+                counter--;
                 return true;
             }
         }
@@ -80,4 +82,4 @@ class HashMap{
         return false;
 
     }
-}
+};
